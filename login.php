@@ -1,27 +1,9 @@
 <?php
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    require('koneksi.php');
-
-    $username = $_POST['idpeg'];
-    $password = $_POST['password'];
-
-    $sql = "SELECT * FROM `pegawai` WHERE `idpeg` = '$username'";
-    $query = mysqli_query($db, $sql);
-    $pegawai = mysqli_fetch_array($query);
-
-    if (!$pegawai) {
-        echo '<h5 class="text-center mt-5 text-danger">Id Pegawai atau password salah</h5>';
-    } else {
-        if ($pegawai['password'] != $password) {
-            echo '<h5 class="text-center mt-5 text-danger">Id Pegawai atau password salah</h5>';
-        }
-    }
+session_start();
+if ($_SESSION) {
+    header("location:home.php");
 }
-
-
 ?>
-
 
 <!doctype html>
 <html lang="en">
@@ -74,3 +56,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </body>
 
 </html>
+
+
+<?php
+
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    require('koneksi.php');
+
+    $username = $_POST['idpeg'];
+    $password = $_POST['password'];
+
+    $sql = "SELECT * FROM `pegawai` WHERE `idpeg` = '$username'";
+    $query = mysqli_query($db, $sql);
+    $pegawai = mysqli_fetch_array($query);
+
+    if (!$pegawai) {
+        echo '<h5 class="text-center mt-5 text-danger">Id Pegawai atau password salah</h5>';
+    } else {
+        if ($pegawai['password'] != $password) {
+            echo '<h5 class="text-center mt-5 text-danger">Id Pegawai atau password salah</h5>';
+        } else {
+            $level = $pegawai['iddep'];
+            $sqlInner = "SELECT 
+                            level
+                        FROM
+                            departemen
+                        INNER JOIN pegawai 
+                        ON departemen.iddep = pegawai.iddep
+                        WHERE departemen.iddep=" . $level . ";";
+
+            $query = mysqli_query($db, $sqlInner);
+            $getlevel = mysqli_fetch_array($query);
+
+
+            $_SESSION['level'] = $getlevel['level'];
+
+            header("location:home.php");
+        }
+    }
+}
+
+
+?>
