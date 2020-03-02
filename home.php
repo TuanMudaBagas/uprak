@@ -9,11 +9,24 @@ if (!$_SESSION['level']) {
 
 require('koneksi.php');
 
-$sql = "SELECT *
-FROM
-departemen
-INNER JOIN pegawai 
-ON departemen.iddep = pegawai.iddep";
+error_reporting(0);
+if ($_POST['cari']) {
+    $cari = $_POST['cari'];
+    $sql = "SELECT *
+    FROM
+    departemen
+    INNER JOIN pegawai 
+    ON departemen.iddep = pegawai.iddep
+    WHERE idpeg LIKE '%$cari%'";
+} else {
+    $sql = "SELECT *
+    FROM
+    departemen
+    INNER JOIN pegawai 
+    ON departemen.iddep = pegawai.iddep";
+}
+
+
 $query = mysqli_query($db, $sql);
 
 ?>
@@ -39,6 +52,7 @@ $query = mysqli_query($db, $sql);
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            login sebagai : <?= $_SESSION['level'] ?>
             <div class="justify-content-end collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <a class="nav-item nav-link" href="logout.php">Logout</a>
@@ -49,16 +63,28 @@ $query = mysqli_query($db, $sql);
 
 
     <div class="container">
+        <div class="row mt-5">
+            <div class="col-8 mx-auto">
+                <form action="" method="POST">
+                    <div class="input-group mb-3">
+                        <input name="cari" type="text" class="form-control" placeholder="Cari Berdasarkan Nama" aria-describedby="button-addon2">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary" type="button" id="button-addon2">Cari Pegawai</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
         <div class="row">
             <div class="col-8 mx-auto">
-                <div class="card mt-5">
+                <div class="card">
                     <div class="card-body">
                         <table class="table table-striped">
                             <h5>Daftar Pegawai</h4>
                                 <?php
                                 if ($_SESSION['level'] == 'ADMIN') :
                                     ?>
-                                    <a class="btn btn-primary btn-sm mb-3" href="">Tambah Pegawai</a>
+                                    <a class="btn btn-primary btn-sm mb-3" href="create.php">Tambah Pegawai</a>
                                 <?php
                                 endif
                                 ?>
@@ -79,13 +105,13 @@ $query = mysqli_query($db, $sql);
                                         <tr>
                                             <th scope="row"><?= $pegawais['idpeg'] ?></th>
                                             <td><?= $pegawais['nama'] ?></td>
-                                            <th scope="row"><?= $pegawais['iddep'] ?></th>
+                                            <th scope="row"><?= $pegawais['nama_depertemen'] ?></th>
                                             <?php if ($_SESSION['level'] == 'ADMIN') : ?>
                                                 <th scope="row"><?= $pegawais['password'] ?></th>
                                             <?php endif ?>
                                             <th scope="row"><?= $pegawais['alamat'] ?></th>
                                             <th scope="row">
-                                                <a href="" class="btn btn-sm btn-primary">Update</a>
+                                                <a href="update.php?id=<?= $pegawais['idpeg'] ?>" class="btn btn-sm btn-primary">Update</a>
                                             </th>
                                         </tr>
                                     <?php endwhile ?>

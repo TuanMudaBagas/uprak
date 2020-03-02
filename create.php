@@ -1,12 +1,7 @@
 <?php
 
-$idpeg = $_GET['id'];
-
 require('koneksi.php');
 
-$sql = "SELECT * FROM `pegawai` WHERE `idpeg` = '$idpeg'";
-$query = mysqli_query($db, $sql);
-$pegawai = mysqli_fetch_array($query);
 
 $sqlDepartemen = "SELECT * FROM `departemen`";
 $queryDepartemen = mysqli_query($db, $sqlDepartemen);
@@ -21,13 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $alamat = $_POST['alamat'];
 
 
-    $sqlUpdate = "UPDATE pegawai SET
-                    idpeg = '$idpeg',
-                    nama = '$nama',
-                    iddep = '$departemen',
-                    password = '$password',
-                    alamat = '$alamat'
-                    WHERE idpeg = '$idpega'
+    $sqlUpdate = "INSERT INTO pegawai
+                    VALUES
+                    ('$idpega','$nama','$departemen','$password','$alamat')
                     ";
 
     $query = mysqli_query($db, $sqlUpdate);
@@ -74,39 +65,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="col-8 mx-auto">
                 <div class="card mt-5">
                     <div class="card-body">
-                        <h5 class="mb-4">Ubah Pegawai</h5>
+                        <h5 class="mb-4">Tambah Pegawai</h5>
                         <form action="" method="POST">
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">Id Pegawai</label>
-                                <input readonly name="idpeg" type="text" value="<?= $pegawai['idpeg'] ?>" class="form-control" id="exampleFormControlInput1">
+                                <input name="idpeg" type="text" class="form-control" id="exampleFormControlInput1">
                             </div>
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">Nama Pegawai</label>
-                                <input name="nama" value="<?= $pegawai['nama'] ?>" type="text" class="form-control" id="exampleFormControlInput1">
+                                <input name="nama" type="text" class="form-control" id="exampleFormControlInput1">
                             </div>
                             <div class="form-group">
                                 <label for="exampleFormControlSelect1">Departemen</label>
                                 <select name="iddep" class="form-control" id="exampleFormControlSelect1">
                                     <option>Pilih Departemen</option>
                                     <?php while ($departemen = mysqli_fetch_array($queryDepartemen)) : ?>
-                                        <?php if ($pegawai['iddep'] == $departemen['iddep']) { ?>
-                                            <option selected value="<?= $departemen['iddep'] ?>"><?= $departemen['nama_depertemen'] ?></option>
-                                        <?php } else { ?>
-                                            <option value="<?= $departemen['iddep'] ?>"><?= $departemen['nama_depertemen'] ?></option>
-                                        <?php } ?>
+                                        <option value="<?= $departemen['iddep'] ?>"><?= $departemen['nama_depertemen'] ?></option>
                                     <?php endwhile ?>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">Password</label>
-                                <input name="password" value="<?= $pegawai['password'] ?>" type="password" class="form-control" id="exampleFormControlInput1">
+                                <input name="password" type="password" class="form-control" id="exampleFormControlInput1">
                             </div>
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">Alamat</label>
-                                <input name="alamat" value="<?= $pegawai['alamat'] ?>" type="text" class="form-control" id="exampleFormControlInput1">
+                                <input name="alamat" type="text" class="form-control" id="exampleFormControlInput1">
                             </div>
                             <a href="home.php" class="btn btn-outline-danger">Kembali Ke Home</a>
-                            <button class="btn btn-primary " type="submit">Ubah Data Pegawai</button>
+                            <button class="btn btn-primary " type="submit">Tambah Data Pegawai</button>
                         </form>
                     </div>
                 </div>
